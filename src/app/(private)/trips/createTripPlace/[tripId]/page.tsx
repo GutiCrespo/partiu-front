@@ -1,17 +1,28 @@
+<<<<<<< HEAD
 'use client' 
+=======
+'use client'
+>>>>>>> b9203d2 (uploading in github to deploy in vercel)
 
 import Container from "@/components/container";
 import Image from "next/image";
 import { CreateTripPlaceForm } from "./form"; 
+<<<<<<< HEAD
 // import { use } from 'react'; 
 // import { useParams } from 'next/navigation';
+=======
+>>>>>>> b9203d2 (uploading in github to deploy in vercel)
 
 interface Props {
     params: { tripId: string }; 
 }
 
 export default function TripPlacesPage({ params }: Props) { 
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> b9203d2 (uploading in github to deploy in vercel)
     const tripId = Number(params.tripId); 
 
     return (

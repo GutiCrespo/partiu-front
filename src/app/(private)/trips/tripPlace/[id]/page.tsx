@@ -33,8 +33,13 @@ interface Props {
     params: { id: string };
 }
 
+<<<<<<< HEAD
 export default async function TripPlace({ params }: Props) {
     const { id } = params; 
+=======
+export default async function Trip({ params }: Props) {
+    const { id } = await params;
+>>>>>>> b9203d2 (uploading in github to deploy in vercel)
     const apiToken = process.env.NEXT_PUBLIC_API_BASE_URL;
 
     const cookieStore = cookies();
@@ -49,6 +54,10 @@ export default async function TripPlace({ params }: Props) {
 
     try {
         const response = await fetch(`${apiToken}/trips/${id}`, {
+<<<<<<< HEAD
+=======
+
+>>>>>>> b9203d2 (uploading in github to deploy in vercel)
             cache: 'no-store',
             method: "GET",
             headers: {
