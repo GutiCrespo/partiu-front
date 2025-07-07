@@ -33,7 +33,7 @@ interface Props {
     params: { id: string };
 }
 
-export default async function Trip({ params }: Props) {
+export default async function TripPlace({ params }: Props) {
     const { id } = params; 
     const apiToken = process.env.NEXT_PUBLIC_API_BASE_URL;
 
