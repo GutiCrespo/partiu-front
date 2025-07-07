@@ -1,15 +1,17 @@
-'use client'
+'use client' 
 
 import Container from "@/components/container";
 import Image from "next/image";
 import { CreateTripPlaceForm } from "./form"; 
+// import { use } from 'react'; 
+// import { useParams } from 'next/navigation';
 
 interface Props {
     params: { tripId: string }; 
 }
 
 export default function TripPlacesPage({ params }: Props) { 
-
+    
     const tripId = Number(params.tripId); 
 
     return (
