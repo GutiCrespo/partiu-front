@@ -1,0 +1,274 @@
+@import 'tailwindcss';
+@import "tw-animate-css";
+@import 'react-datepicker/dist/react-datepicker.css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+
+@theme {
+  --font-poppins: 'Poppins', sans-serif;
+
+  /* Cores originais do usuário */
+  --color-hover-primary: #825F60;
+  --color-blue: #0086d5;
+  --color-red: #fe3d39;
+  --color-yellow: #ffb600;
+  --color-black: #050505;
+  --color-white: #F5F5F5;
+  --color-dark-bg: #1e1e1e;
+  --color-dark-gray: #121212;
+  --color-light-gray: #E5E5E5;
+  --color-normal-gray: #866969;
+
+  /* Variáveis de raio para componentes */
+  --radius: 0.625rem;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* Mapeamento de cores do Shadcn para o tema do usuário */
+  --background: var(--color-white);
+  --foreground: var(--color-black);
+  
+  /* Sistema de cores primárias múltiplas */
+  --primary-blue: var(--color-blue);
+  --primary-red: var(--color-red);
+  --primary-yellow: var(--color-yellow);
+  --primary: var(--primary-blue); /* Padrão para compatibilidade */
+  --primary-foreground: var(--color-white);
+  
+  /* Cores secundárias e de interface */
+  --secondary: var(--color-light-gray);
+  --secondary-foreground: var(--color-dark-gray);
+  --muted: var(--color-light-gray);
+  --muted-foreground: var(--color-normal-gray);
+  --accent: var(--color-hover-primary);
+  --accent-foreground: var(--color-white);
+  
+  /* Elementos de UI */
+  --card: var(--color-white);
+  --card-foreground: var(--color-black);
+  --popover: var(--color-white);
+  --popover-foreground: var(--color-black);
+  --border: var(--color-light-gray);
+  --input: var(--color-light-gray);
+  --ring: var(--color-normal-gray);
+  --destructive: var(--color-red);
+  
+  /* Cores para gráficos */
+  --chart-1: var(--color-red);
+  --chart-2: var(--color-blue);
+  --chart-3: #005a8f; /* Versão escura do azul */
+  --chart-4: var(--color-yellow);
+  --chart-5: var(--color-hover-primary);
+  
+  /* Cores para sidebar (mantidas para compatibilidade) */
+  --sidebar: var(--color-white);
+  --sidebar-foreground: var(--color-black);
+  --sidebar-primary: var(--color-blue);
+  --sidebar-primary-foreground: var(--color-white);
+  --sidebar-accent: var(--color-light-gray);
+  --sidebar-accent-foreground: var(--color-dark-gray);
+  --sidebar-border: var(--color-light-gray);
+  --sidebar-ring: var(--color-normal-gray);
+  
+  /* Sombras */
+  --shadow-difuse: "0px 20px 24px -12px rgba(15, 25, 40, 0.12), 0px 12px 12px -8px rgba(15, 25, 40, 0.04)"
+}
+
+/* Mapeamento para compatibilidade com o Shadcn */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+body {
+  font-family: var(--font-poppins);
+}
+
+/* button {
+  all: unset;
+} */
+
+/* Modo escuro (mantido para compatibilidade com Shadcn) */
+.dark {
+  --background: var(--color-dark-bg);
+  --foreground: var(--color-white);
+  --card: var(--color-dark-gray);
+  --card-foreground: var(--color-white);
+  --popover: var(--color-dark-gray);
+  --popover-foreground: var(--color-white);
+  --primary: var(--color-light-gray);
+  --primary-foreground: var(--color-dark-gray);
+  --secondary: #333333;
+  --secondary-foreground: var(--color-white);
+  --muted: #333333;
+  --muted-foreground: var(--color-normal-gray);
+  --accent: #333333;
+  --accent-foreground: var(--color-white);
+  --destructive: #ff5a5a;
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.15);
+  --ring: var(--color-normal-gray);
+  --chart-1: #7c3aed;
+  --chart-2: #3b82f6;
+  --chart-3: var(--color-yellow);
+  --chart-4: #ec4899;
+  --chart-5: #f97316;
+  --sidebar: var(--color-dark-gray);
+  --sidebar-foreground: var(--color-white);
+  --sidebar-primary: #7c3aed;
+  --sidebar-primary-foreground: var(--color-white);
+  --sidebar-accent: #333333;
+  --sidebar-accent-foreground: var(--color-white);
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: var(--color-normal-gray);
+}
+
+/* Dektop */
+h1 {
+  font-size: 36px;
+  line-height: 40px;
+  font-weight: bold;
+}
+
+h1.regular {
+  font-size: 36px;
+  line-height: 40px;
+  font-weight: normal;
+}
+
+h2 {
+  font-size: 28px;
+  line-height: 32px;
+  font-weight: bold;
+}
+
+h3 {
+  font-size: 22px;
+  line-height: 26px;
+  font-weight: normal;
+}
+
+h4 {
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: normal;
+}
+
+p {
+  font-size: 16px;
+  line-height: 28px;
+  font-weight: normal;
+}
+
+p.bold {
+  font-size: 16px;
+  line-height: 28px;
+  font-weight: bold;
+}
+
+p.small {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: normal;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 26px;
+    line-height: 28px;
+    font-weight: bold;
+  }
+
+  h1.regular {
+    font-size: 26px;
+    line-height: 28px;
+    font-weight: normal;
+  }
+
+  h2 {
+    font-size: 22px;
+    line-height: 26px;
+    font-weight: bold;
+  }
+
+  h2.regular {
+    font-size: 22px;
+    line-height: 26px;
+    font-weight: normal;
+  }
+
+  h3 {
+    font-size: 18px;
+    line-height: 22px;
+    font-weight: normal;
+  }
+
+  h4 {
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: normal;
+  }
+
+  p {
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: normal;
+  }
+
+  p.bold {
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: bold;
+  }
+
+  p.small {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: normal;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
