@@ -34,7 +34,7 @@ interface Props {
 }
 
 export default async function Trip({ params }: Props) {
-    const { id } = await params;
+    const { id } = params; 
     const apiToken = process.env.NEXT_PUBLIC_API_BASE_URL;
 
     const cookieStore = cookies();
@@ -49,7 +49,6 @@ export default async function Trip({ params }: Props) {
 
     try {
         const response = await fetch(`${apiToken}/trips/${id}`, {
-
             cache: 'no-store',
             method: "GET",
             headers: {
