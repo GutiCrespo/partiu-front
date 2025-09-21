@@ -40,7 +40,7 @@ export default function SearchDestination() {
                     alt="Grupo de amigos Planejando"
                     className=""
                 />
-                <h2>Onde iremos hoje?</h2>
+                <h2 className="text-bold text-xl md:text-3xl">Onde iremos hoje?</h2>
                 
                 {/* <Input
                     type="text"

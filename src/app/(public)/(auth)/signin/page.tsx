@@ -10,7 +10,7 @@ export default function signin() {
         <Container>
             <div className="content w-full">
                 <header className="">
-                    <h2>Crie sua Conta</h2>
+                    <h2 className="text-bold text-xl md:text-3xl">Crie sua Conta</h2>
                     <p className="">Comece sua viagem por aqui.</p>
                 </header>
                 <section className="flex flex-col mt-4 max-w-lg">

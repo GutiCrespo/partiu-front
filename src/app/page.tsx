@@ -15,7 +15,7 @@ export default function Home() {
 
         <div className="flex flex-col md:flex-row md:justify-around max-w-6xl gap-6 md:gap-0">
           <header className="flex flex-col items-center text-center gap-4">
-            <h1 className="max-w-96 md:max-w-2xl md:px-12">Planeje sua viagem <span className="text-red">sem dores</span> ou <span className="text-blue">incômodos</span></h1>
+            <h1 className="font-bold text-2xl md:text-4xl max-w-96 md:max-w-2xl md:px-12">Planeje sua viagem <span className="text-red">sem dores</span> ou <span className="text-blue">incômodos</span></h1>
             <p className="max-w-96 md:max-w-2xl w-2/3">Crie seu roteiro, compartilhe com quem você quiser e <span className="text-blue font-bold">Partiu!</span> Aproveite sua viagem.</p>
             <Image 
               width={360} 
@@ -40,7 +40,7 @@ export default function Home() {
                 alt="Mulher marcando como concluido um quadrado." 
                 className="max-w-[40%]"
               />
-              <p className="bold"> Planejamento em grupo</p>
+              <p className="font-bold"> Planejamento em grupo</p>
               <p className="">Convide amigos e monte o roteiro juntos, sem stress.</p>
             </div>
             <div className={cardCSS}>
@@ -51,7 +51,7 @@ export default function Home() {
                 alt="Um mapa com várias setas apontando para um coração que está ao centro." 
                 className="max-w-[40%]"
               />
-              <p className="bold">Roteiros organizados por dia</p>
+              <p className="font-bold">Roteiros organizados por dia</p>
               <p className="">Crie uma linha do tempo das melhores opções para seu dia.</p>
             </div>
             <div className={cardCSS}>
@@ -62,7 +62,7 @@ export default function Home() {
                 alt="Um grupo de amigos planejando" 
                 className="max-w-[40%]"
               />
-              <p className="bold">Mapa integrado com locais</p>
+              <p className="font-bold">Mapa integrado com locais</p>
               <p className="">Adicione lugares direto do mapa com dados reais da cidade.</p>
             </div>
           </section>

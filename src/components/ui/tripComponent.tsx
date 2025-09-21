@@ -82,7 +82,7 @@ export default function TripComponentPage({ trip }: { trip: Trip }) {
 
             <div className="w-full md:w-1/2 mt-4 md:mt-0 md:ml-4">
                 <header className="">
-                    <h2 className="mb-2">{tripName}</h2>
+                    <h2 className="text-bold text-xl md:text-3xlmb-2">{tripName}</h2>
                     <div className="flex items-center text-xs gap-2">
                         <Image
                             src="/calendar_icon.svg"

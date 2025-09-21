@@ -29,7 +29,7 @@ export default function TripPlacesPage({ params }: Props) {
         <Container>
             <div className="content w-full">
                 <header className="">
-                    <h2 className="mb-4">Adicionar Local ao Roteiro</h2> 
+                    <h2 className="text-bold text-xl md:text-3xlmb-4">Adicionar Local ao Roteiro</h2> 
                 </header>
                 <section className="w-full mt-8">
                     <Image

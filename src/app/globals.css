@@ -159,7 +159,7 @@ body {
 }
 
 /* Dektop */
-h1 {
+/* h1 {
   font-size: 36px;
   line-height: 40px;
   font-weight: bold;
@@ -190,14 +190,6 @@ h4 {
 }
 
 p {
-  font-size: 16px;
-  line-height: 28px;
-  font-weight: normal;
-}
-
-p.bold {
-  font-size: 16px;
-  line-height: 28px;
   font-weight: bold;
 }
 
@@ -205,10 +197,19 @@ p.small {
   font-size: 14px;
   line-height: 20px;
   font-weight: normal;
+}  font-size: 16px;
+  line-height: 28px;
+  font-weight: normal;
 }
 
+p.bold {
+  font-size: 16px;
+  line-height: 28px;
+  }
+  */
+
 /* Mobile */
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   h1 {
     font-size: 26px;
     line-height: 28px;
@@ -262,7 +263,7 @@ p.small {
     line-height: 16px;
     font-weight: normal;
   }
-}
+}  */
 
 @layer base {
   * {

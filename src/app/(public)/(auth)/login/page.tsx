@@ -11,7 +11,7 @@ export default function login() {
         <Container>
                 <div className="content w-full">
                     <header className="">
-                        <h2>Acesse sua conta</h2>
+                        <h2 className="text-bold text-xl md:text-3xl">Acesse sua conta</h2>
                         <p className="">Boas vindas novamente.</p>
                     </header>
                     <section className="flex flex-col mt-4 max-w-lg">
