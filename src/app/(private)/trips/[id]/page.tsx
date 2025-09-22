@@ -29,12 +29,13 @@ interface TripData {
     places: Place[];
 }
 
-interface Props {
-    params: Promise<{ id: string }>
+type PageParams =  {
+    id: string
 }
 
-export default async function Trip({ params }: Props) {
-    const { id } = params; 
+export default async function Trip({ params }: {params: PageParams}) {
+    const id = params.id;
+
     const apiToken = process.env.NEXT_PUBLIC_API_BASE_URL;
 
     const cookieStore = cookies();

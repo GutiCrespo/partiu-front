@@ -42,15 +42,10 @@ export const useAuthLogic = () => {
       toast.success(`Bem-vindo, ${response.name || response.email}!`);
       console.log(`Bem-vindo, ${response.name || response.email}!`);
       router.push("/");
-<<<<<<< HEAD
+
     } catch (error) {
       console.error("Erro no login:", error);
       // toast.error(error.message || "Credenciais inválidas. Tente novamente.");
-=======
-    } catch (error: any) {
-      console.error("Erro no login:", error);
-      toast.error(error.message || "Credenciais inválidas. Tente novamente.");
->>>>>>> b9203d2 (uploading in github to deploy in vercel)
       logout();
     }
   };
@@ -78,15 +73,9 @@ export const useAuthLogic = () => {
       console.log("Cadastro realizado com sucesso");
       
       router.push("/");
-<<<<<<< HEAD
     } catch (error) {
       console.error("Erro no cadastro:", error);
       // toast.error(error.message || "Erro ao cadastrar. O e-mail pode já estar em uso.");
-=======
-    } catch (error: any) {
-      console.error("Erro no cadastro:", error);
-      toast.error(error.message || "Erro ao cadastrar. O e-mail pode já estar em uso.");
->>>>>>> b9203d2 (uploading in github to deploy in vercel)
       logout();
     }
   };
@@ -102,15 +91,9 @@ export const useAuthLogic = () => {
           const userData = await AuthService.verifyToken(authToken);
           setUserInfo(userData);
           setIsLoggedIn(true);
-<<<<<<< HEAD
         } catch (error) {
           console.error("Erro ao verificar token na inicialização:", error);
           // toast.error(error.message || "Sessão expirada ou inválida. Por favor, faça login novamente.");
-=======
-        } catch (error: any) {
-          console.error("Erro ao verificar token na inicialização:", error);
-          toast.error(error.message || "Sessão expirada ou inválida. Por favor, faça login novamente.");
->>>>>>> b9203d2 (uploading in github to deploy in vercel)
           logout();
         }
       } else {
