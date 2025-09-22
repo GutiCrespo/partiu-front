@@ -39,7 +39,7 @@ export default async function Trip({ params }: {params: PageParams}) {
     const apiToken = process.env.NEXT_PUBLIC_API_BASE_URL;
 
     const cookieStore = cookies();
-    const authToken = (await cookieStore).get("authToken")?.value;
+    const authToken =  (await cookieStore).get("authToken")?.value;
 
     if (!authToken) {
         permanentRedirect("/login?error=auth_required");
