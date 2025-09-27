@@ -29,17 +29,15 @@ interface TripData {
     places: Place[];
 }
 
-type PageParams =  {
-    id: string
-}
+type Props = { params: Promise<{ id: string }> };
 
-export default async function Trip({ params }: {params: PageParams}) {
-    const id = params.id;
+export default async function Trip({ params }: Props) {
+    const { id } = await params;
 
     const apiToken = process.env.NEXT_PUBLIC_API_BASE_URL;
 
     const cookieStore = cookies();
-    const authToken =  (await cookieStore).get("authToken")?.value;
+    const authToken =   (await cookieStore).get("authToken")?.value;
 
     if (!authToken) {
         permanentRedirect("/login?error=auth_required");
