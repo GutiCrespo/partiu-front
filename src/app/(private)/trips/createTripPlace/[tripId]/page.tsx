@@ -4,12 +4,10 @@ import Container from "@/components/container";
 import Image from "next/image";
 import { CreateTripPlaceForm } from "./form"; 
 
-interface Props {
-    params: { tripId: string }; 
-}
+type Props = { params: Promise<{ tripId: string }> };
 
-export default function TripPlacesPage({ params }: Props) { 
-    const tripId = Number(params.tripId); 
+export default function TripPlacesPage({ params }: Props) {  
+    const tripId = Number(params)
 
     return (
         <Container>
