@@ -29,10 +29,10 @@ interface TripData {
     places: Place[];
 }
 
-type Props = { params: Promise<{ id: string }> };
+type Props = { params: { id: string } }
 
 export default async function Trip({ params }: Props) {
-    const { id } = await params;
+    const { id } = params;
 
     const apiToken = process.env.NEXT_PUBLIC_API_BASE_URL;
 
