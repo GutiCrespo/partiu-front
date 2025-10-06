@@ -1,7 +1,8 @@
-import Container from "@/components/container";
-import TripComponentPage from "@/components/ui/tripComponent";
-import { cookies } from 'next/headers'; 
-import { permanentRedirect } from "next/navigation"; 
+import Container from "@/components/container"
+import TripComponentPage from "@/components/ui/tripComponent"
+import { cookies } from 'next/headers' 
+import { permanentRedirect } from "next/navigation";
+import { use } from 'react'
 
 interface Place {
     id: number;
@@ -29,16 +30,23 @@ interface TripData {
     places: Place[];
 }
 
-interface Props {
-    params: { id: string };
+
+
+type CookieStore = Awaited<ReturnType<typeof cookies>>
+
+async function getCookieStore(): Promise<CookieStore> {
+    const maybe = cookies() as CookieStore | Promise<CookieStore>;
+    return maybe instanceof Promise ? await maybe : maybe;
 }
 
-export default async function Trip({ params }: Props) {
-    const { id } = params; 
-    const apiToken = process.env.NEXT_PUBLIC_API_BASE_URL;
+type Props = Promise<{ id: string }>
 
-    const cookieStore = cookies();
-    const authToken = (await cookieStore).get("authToken")?.value;
+export default async function Trip({params}: {params: Props}) {
+    const { id } : {id: string} = await params
+    const apiToken = process.env.NEXT_PUBLIC_API_BASE_URL
+
+    const cookieStore = await getCookieStore()
+    const authToken = cookieStore.get("authToken")?.value
 
     if (!authToken) {
         permanentRedirect("/login?error=auth_required");
