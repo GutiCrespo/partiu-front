@@ -14,7 +14,7 @@ const isProtectedPath = (path: string) => {
   for (const base of protectRoutes) {
     if (path === base) return true
 
-    // protege subrotas: /trips/..., /trips/123, /trips/abc/xyz
+    // protege subrotas: 
     if (base !== '/' && path.startsWith(base + "/")) return true
   }
   return false

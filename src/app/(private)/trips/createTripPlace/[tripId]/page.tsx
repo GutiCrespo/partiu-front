@@ -3,16 +3,16 @@
 import Container from "@/components/container";
 import Image from "next/image";
 import { CreateTripPlaceForm } from "./form"; 
-// import { use } from 'react'; 
-// import { useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 
 interface Props {
     params: { tripId: string }; 
 }
 
-export default function TripPlacesPage({ params }: Props) { 
+export default function TripPlacesPage() { 
     
-    const tripId = Number(params.tripId); 
+    const {tripId} = useParams<{tripId: string}>()
+    const tripIdNum = Number(tripId)
 
     return (
         <Container>
@@ -29,8 +29,8 @@ export default function TripPlacesPage({ params }: Props) {
                     className="absolute top-1 right-6 z-40"
                     />
 
-                    {!isNaN(tripId) ? (
-                    <CreateTripPlaceForm tripId={tripId}/>
+                    {!Number.isNaN(tripIdNum) ? (
+                    <CreateTripPlaceForm tripId={tripIdNum}/>
                     ) : (
                         <p className="text-red-500 text-center">ID da viagem inválido. Não foi possível adicionar um local.</p>
                     )}

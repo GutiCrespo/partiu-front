@@ -2,7 +2,6 @@ import Container from "@/components/container"
 import TripComponentPage from "@/components/ui/tripComponent"
 import { cookies } from 'next/headers' 
 import { permanentRedirect } from "next/navigation";
-import { use } from 'react'
 
 interface Place {
     id: number;

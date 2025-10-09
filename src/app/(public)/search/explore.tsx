@@ -11,7 +11,7 @@ export default function ExploreSection() {
         setShowAllCards(!showAllCards)
     }
 
-    const cards = Array.from({length: 6}).map((_, i) => <CardPlace key={i}/>)
+    const cards = Array.from({length: 6}).map((_, i) => <CardPlace key={i} placeName={""} placeRating={""} placeLocation={""}/>)
 
     return (
         <section className="explore-o-brasil w-full">
