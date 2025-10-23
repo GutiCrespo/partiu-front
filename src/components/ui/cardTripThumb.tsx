@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from 'next/link'
 
 import { Button } from "./button";
+import { usePlacePhoto } from "@/hooks/usePlacePhoto";
+import { useEffect, useState } from "react";
 
 interface Place {
     id: number;
@@ -13,7 +15,7 @@ interface Place {
     type?: string | null;
     rating?: number | null;
     openingHours?: string | null;
-    photoName?: string[] | null;
+    photoName?: string | string[] | null;
     phone?: string | null;
     website?: string | null;
     isDestination: boolean;
@@ -32,24 +34,48 @@ interface Trip {
 
 export default function CardTripThumb({ trip }: { trip: Trip }) {
 
-    
-    const tripPhoto = "/mockup/place.png";
+    const [photoName, setPhotoName] = useState<string | null>(null);
 
+    console.log("========== DEBUG TRIP ==========");
+    console.log("cardTripThumb.tsx");
+    console.dir(trip, { depth: null, colors: true });
+    
+    useEffect(() => {
+    const firstPlaceWithPhoto = trip.places.find(
+        place => place.photoName && (Array.isArray(place.photoName) ? place.photoName.length > 0 : place.photoName.trim().length > 0)
+    );
+
+    let firstPhoto: string | null = null;
+    const pn = firstPlaceWithPhoto?.photoName;
+
+    if (Array.isArray(pn)) {
+        firstPhoto = pn[0] ?? null;
+    } else if (typeof pn === "string") {
+        firstPhoto = pn || null;
+    }
+
+    console.log("UseEffect ativado. FirstPhoto retornou:", firstPhoto);
+    setPhotoName(firstPhoto);
+    }, [trip]);
+        
+    const {photoUrl, error: photoError} = usePlacePhoto(photoName); 
+    
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
         const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
         return date.toLocaleDateString('pt-BR', options);
     };
-
+    
     const tripName = trip.name;
     const tripBegin = formatDate(trip.startDate);
     const tripEnds = formatDate(trip.endDate);    
+    console.log("================================\n");
     
     return (
         <div className="bg-white border border-gray w-full flex p-2 gap-2 rounded-lg h-fit md:h-fit lg:h-fit overflow-hidden">
             <div className="relative aspect-square w-1/3 shrink-0 mr-2">
                     <Image
-                        src={tripPhoto}
+                        src={photoUrl}
                         alt="foto local"
                         fill
                         sizes="(max-width: 768px) 33vw, (max-width: 1200px) 25vw, 20vw"

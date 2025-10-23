@@ -67,9 +67,7 @@ export default function TripsPage() {
 
                 const data: Trip[] = await response.json();
                 setTripData(data);
-                console.log("Dados recebidos:", data);
             } catch (err) {
-                console.error("Erro ao buscar dados:", err);
                 setError((err as Error).message || "Ocorreu um erro ao carregar as viagens.");
             } finally {
                 setLoading(false);

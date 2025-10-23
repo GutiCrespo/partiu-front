@@ -28,16 +28,12 @@ export function middleware(request: NextRequest) {
   console.log(`O path é: ${path}`);
 
   if (token && isAuthPage(path)) {
-    console.log(
-      "Usuário autenticado tentando acessar rota pública de autenticação. Redirecionando para home"
-    );
     return NextResponse.redirect(new URL("/", request.url));
   }
 
   const routeIsProtected = isProtectedPath(path);
 
   if (routeIsProtected) {
-    console.log(`O path ${path} é uma rota protegida`);
     if (!token) {
       console.log(
         `Usuário não autenticado tentando acessar ${path}. Redirecionando para ${redirectRoute}.`
@@ -46,10 +42,6 @@ export function middleware(request: NextRequest) {
       url.searchParams.set("next", path + search);
       return NextResponse.redirect(url);
     }
-  } else {
-    console.log(
-      `O path ${path} é uma rota PÚBLICA (ou não requer autenticação).`
-    );
   }
 
   return NextResponse.next();

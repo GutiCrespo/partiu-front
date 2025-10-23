@@ -34,6 +34,11 @@ interface Trip {
 
 export default function TripComponentPage({ trip }: { trip: Trip }) {
 
+    console.log("========== DEBUG TRIP ==========");
+    console.log("Trip Component Page");
+    console.dir(trip, { depth: null, colors: true });
+    console.log("================================\n");
+
     const [photoName, setPhotoName] = useState<string | null>(null);
 
     useEffect(() => {
@@ -41,21 +46,13 @@ export default function TripComponentPage({ trip }: { trip: Trip }) {
             place => place.photoName && place.photoName.length > 0
         );
         
-        const firstPhoto = firstPlaceWithPhoto?.photoName?.[0] || null;
         
-        console.log(`--- Início do useEffect ---`);
-        console.log(`First Photo (from useEffect):`, firstPhoto); 
-        console.log(`Objeto Trip COMPLETO (from useEffect):`, trip);
-        console.log(`Array Trip Places COMPLETO (from useEffect):`, trip.places); 
+        const firstPhoto = firstPlaceWithPhoto?.photoName?.[0] || null;
         
         setPhotoName(firstPhoto);
     }, [trip]); 
 
-    const {
-        photoUrl,
-        // loading: photoLoading,
-        error: photoError
-    } = usePlacePhoto(photoName); 
+    const {photoUrl, error: photoError} = usePlacePhoto(photoName); 
 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
@@ -111,6 +108,7 @@ export default function TripComponentPage({ trip }: { trip: Trip }) {
                                         placeRating={place.rating ? place.rating.toFixed(1) : "N/A"}
                                         placePhotoName={place.photoName?.[0]}
                                     />
+                                    
                                 )
                             )}
                             <Link href={`/trips/createTripPlace/${trip.id}`}><p><span className="text-blue cursor-pointer hover:font-bold">Adicionar outro destino</span></p></Link>

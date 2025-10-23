@@ -2,54 +2,77 @@ import { useState, useEffect } from 'react';
 
 interface UsePlacePhotoResult {
   photoUrl: string;
-  // loading: boolean;
   error: string | null;
 }
 
-export function usePlacePhoto(placePhotoName: string | null | undefined, fallbackPhoto: string = "/mockup/place.png"): UsePlacePhotoResult {
+
+export function usePlacePhoto(
+  placePhotoName: string | null | undefined,
+  fallbackPhoto: string = "/mockup/place.png"
+): UsePlacePhotoResult {
   const [photoUrl, setPhotoUrl] = useState<string>(fallbackPhoto);
-  // const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+
+    console.log(`PlacePhotoName recebido: ${placePhotoName}`);
+    
     if (!placePhotoName || !placePhotoName.startsWith("places/")) {
+      console.log("Necessário utilizar o fallback");
       setPhotoUrl(fallbackPhoto);
-      // setLoading(false);
       return;
     }
 
     const fetchPhoto = async () => {
-      // setLoading(true);
-      setError(null);
       try {
-        const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL
-        
-        const response = await fetch(`${backendUrl}/tripPlaces/photo?photoName=${placePhotoName}`, {
-          cache: 'no-store',
-          method: "GET",
-        });
+        const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+        if (!backendUrl) throw new Error("NEXT_PUBLIC_API_BASE_URL não definido.");
 
+        
+        console.log(`---------------`);
+        console.log(`Page: usePlacePhoto`);
+        console.log(`PlacePhotoName = ${placePhotoName}`);
+        console.log(`Request ao backend através do link ${backendUrl}/tripPlaces/photo?photoName=${placePhotoName}`);
+        console.log(`---------------`);
+        
+      const url = `${backendUrl}/tripPlaces/photo?photoName=${encodeURIComponent(placePhotoName ?? "")}`;
+
+        const response = await fetch(url, { cache: "no-store", method: "GET" });
         if (!response.ok) {
           const errorText = await response.text();
           throw new Error(`Erro ao buscar a imagem: ${response.status} - ${errorText}`);
         }
 
         const data = await response.json();
-        setPhotoUrl(data.url)
-
+        if (!data?.photoUri) throw new Error("photoUri ausente na resposta");
+        setPhotoUrl(data.photoUri);
       } catch (err) {
         console.error("Erro no hook usePlacePhoto:", err);
         setError((err as Error).message || "Falha ao carregar a imagem.");
         setPhotoUrl(fallbackPhoto);
-      } finally {
-        // setLoading(false);
       }
     };
 
-    fetchPhoto();
-  }, [placePhotoName, fallbackPhoto]);
+    // Chamando photos diretamente pelo front
+    // Impossível, pois o CORS não permite.. maldito cors.
+    // const fetchPhoto = async () => {
+    //   try {
+    //     const url = new URL(`https://places.googleapis.com/v1/${photoName}/media?maxWidthPx=1200&key=${googleApiKey}`);
 
-  return { photoUrl, 
-          //  loading,
-           error };
+    //     const response = await fetch(url.toString(), {
+    //       method: "GET",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //         "X-Goog-Api-Key": googleApiKey
+    //       },
+    //     });
+    //   } catch (error) {
+    //       console.error("Erro no proxy de fotos:", error);
+    //   }
+    // }
+
+    fetchPhoto();
+  }, [fallbackPhoto, placePhotoName]);
+
+  return { photoUrl, error };
 }
