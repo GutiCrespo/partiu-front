@@ -2,7 +2,7 @@
 /** @type {import('next').NextConfig} */
 
 const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-const apiProd = process.env.NEXT_PUBLIC_API_PRODUCAO;
+// const apiProd = process.env.NEXT_PUBLIC_API_PRODUCAO;
 
 const nextConfig = {
   images: {
@@ -14,7 +14,7 @@ const nextConfig = {
 
       // Acesso ao nosso backend
       { protocol: 'https', hostname: apiUrl},
-      { protocol: 'https', hostname: apiProd },
+      // { protocol: 'https', hostname: apiProd },
     ],
     domains: ['lh3.googleusercontent.com'] 
   },

@@ -18,22 +18,21 @@ export const AuthService = {
 
     if (!response.ok) {
       const errorData = await response.json();
+      console.log(errorData);
       throw new Error(errorData.erro || "Erro no login.");
     }
 
     return response.json();
   },
 
-  async register(email: string, password: string): Promise<UserRegisterResponse> {
-
-    console.log("Service called");
+  async register(name: string, email: string, password: string): Promise<UserRegisterResponse> {
     
     const response = await fetch(`${apiUrl}/users`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ name, email, password }),
     });
     
     if (!response.ok) {
@@ -41,7 +40,7 @@ export const AuthService = {
       throw new Error(errorData.erro || "Erro no cadastro.");
     }
     
-    console.log("Service complete without problem.");
+    console.log("Registrado com sucesso.");
     return response.json();
   },
 
@@ -53,7 +52,7 @@ export const AuthService = {
         "Authorization": `Bearer ${authToken}`,
       },
     });
-
+    
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.error || "Erro ao verificar token.");

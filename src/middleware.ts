@@ -6,11 +6,16 @@ const protectRoutes = new Set([
   '/trips',
 ])
 
+const publicPrefixes = ['/trips/invite']
+
 const redirectRoute = '/signin'
 
 const isAuthPage = (path: string) => path === "/signin" || path === "/login"
 
 const isProtectedPath = (path: string) => {
+
+  if (publicPrefixes.some(p => path.startsWith(p))) return false;
+
   for (const base of protectRoutes) {
     if (path === base) return true
 
@@ -25,23 +30,17 @@ export function middleware(request: NextRequest) {
   const search = request.nextUrl.search
   const token = request.cookies.get('authToken')?.value
 
-  console.log(`O path é: ${path}`);
+  // console.log(`O path é: ${path}`);
 
   if (token && isAuthPage(path)) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  const routeIsProtected = isProtectedPath(path);
-
-  if (routeIsProtected) {
-    if (!token) {
-      console.log(
-        `Usuário não autenticado tentando acessar ${path}. Redirecionando para ${redirectRoute}.`
-      )
-      const url = new URL(redirectRoute, request.url);
-      url.searchParams.set("next", path + search);
-      return NextResponse.redirect(url);
-    }
+  // Protege o resto
+  if (isProtectedPath(path) && !token) {
+    const url = new URL(redirectRoute, request.url);
+    url.searchParams.set("next", path + search);
+    return NextResponse.redirect(url);
   }
 
   return NextResponse.next();

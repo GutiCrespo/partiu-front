@@ -7,18 +7,54 @@ import { AuthService } from "@/services/AuthService";
 import { setCookie, removeCookie, getCookie } from "@/helpers/cookies";
 import { useAuthContext } from "@/contexts/auth";
 
+function getSafeNextFromLocation(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const url = new URL(window.location.href);
+    const next = url.searchParams.get("next");
+    if (!next) return null;
+
+    // Só aceita caminhos internos iniciando com "/"
+    if (next.startsWith("/") && !next.startsWith("//")) {
+      return next;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * (Opcional) Calcula a rota atual para usar em ?next= no logout.
+ */
+function getCurrentPathWithSearch(): string {
+  if (typeof window === "undefined") return "/";
+  const { pathname, search } = window.location;
+  return pathname + (search || "");
+}
 
 export const useAuthLogic = () => {
   const router = useRouter();
 
-  const { userInfo, isLoggedIn, setUserInfo, setIsLoggedIn, isLoadingAuth, setIsLoadingAuth } = useAuthContext()
+  const {
+    userInfo,
+    isLoggedIn,
+    setUserInfo,
+    setIsLoggedIn,
+    isLoadingAuth,
+    setIsLoadingAuth,
+  } = useAuthContext();
+
   const logout = useCallback(() => {
     setUserInfo(null);
     setIsLoggedIn(false);
     removeCookie("authToken");
     toast.info("Você foi desconectado.");
-    router.push("/login");
-  }, [setUserInfo, setIsLoggedIn, router])
+
+    // Envia a rota atual em ?next= para, após login, retornar onde estava
+    const back = getCurrentPathWithSearch();
+    router.replace(`/login?next=${encodeURIComponent(back)}`);
+  }, [setUserInfo, setIsLoggedIn, router]);
 
   // Função de login
   const login = async (email: string, password: string) => {
@@ -38,21 +74,23 @@ export const useAuthLogic = () => {
         phone: response.phone,
         profilePicture: response.profilePicture,
       });
-      setIsLoggedIn(true)
+      setIsLoggedIn(true);
       toast.success(`Bem-vindo, ${response.name || response.email}!`);
-      console.log(`Bem-vindo, ${response.name || response.email}!`);
-      router.push("/");
-    } catch (error) {
+
+      // Respeita o ?next= (se não houver, vai para "/")
+      const next = getSafeNextFromLocation() || "/";
+      router.replace(next);
+    } catch (error: unknown) {
       console.error("Erro no login:", error);
-      // toast.error(error.message || "Credenciais inválidas. Tente novamente.");
-      logout();
+      toast.error("Credenciais inválidas. Tente novamente.");
+      // não faz logout aqui
     }
   };
 
   // Função de registro
-  const register = async (email: string, password: string) => {
+  const register = async (name: string, email: string, password: string) => {
     try {
-      const response = await AuthService.register(email, password);
+      const response = await AuthService.register(name, email, password);
 
       setCookie({
         name: "authToken",
@@ -69,22 +107,22 @@ export const useAuthLogic = () => {
       });
       setIsLoggedIn(true);
       toast.success("Cadastro realizado com sucesso!");
-      console.log("Cadastro realizado com sucesso");
-      
-      router.push("/");
+
+      // Respeita o ?next= também no cadastro
+      const next = getSafeNextFromLocation() || "/";
+      router.replace(next);
     } catch (error) {
       console.error("Erro no cadastro:", error);
-      // toast.error(error.message || "Erro ao cadastrar. O e-mail pode já estar em uso.");
-      logout();
+      // toast.error("Erro ao cadastrar. O e-mail pode já estar em uso.");
+      // logout();
     }
   };
 
   useEffect(() => {
     const verifyAuthOnLoad = async () => {
-
-      setIsLoadingAuth(true)
+      setIsLoadingAuth(true);
       const authToken = getCookie("authToken");
-      
+
       if (authToken) {
         try {
           const userData = await AuthService.verifyToken(authToken);
@@ -92,20 +130,31 @@ export const useAuthLogic = () => {
           setIsLoggedIn(true);
         } catch (error) {
           console.error("Erro ao verificar token na inicialização:", error);
-          // toast.error(error.message || "Sessão expirada ou inválida. Por favor, faça login novamente.");
+          // toast.error("Sessão expirada ou inválida. Por favor, faça login novamente.");
           logout();
         }
       } else {
-        setUserInfo(null)
-        setIsLoggedIn(false)
+        setUserInfo(null);
+        setIsLoggedIn(false);
       }
-      setIsLoadingAuth(false)
+      setIsLoadingAuth(false);
     };
 
-    if (isLoadingAuth || (!isLoggedIn && userInfo === null && getCookie("authToken"))) {
-        verifyAuthOnLoad();
+    if (
+      isLoadingAuth ||
+      (!isLoggedIn && userInfo === null && getCookie("authToken"))
+    ) {
+      void verifyAuthOnLoad();
     }
-  }, [logout, setUserInfo, setIsLoggedIn, setIsLoadingAuth, isLoadingAuth, isLoggedIn, userInfo])
+  }, [
+    logout,
+    setUserInfo,
+    setIsLoggedIn,
+    setIsLoadingAuth,
+    isLoadingAuth,
+    isLoggedIn,
+    userInfo,
+  ]);
 
   return {
     userInfo,

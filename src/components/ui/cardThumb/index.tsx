@@ -10,7 +10,7 @@ interface CardPlaceProps {
 
 export default function CardPlaceThumb({ placeName, placeLocation, placeRating, placePhotoName }: CardPlaceProps) {
 
-    console.log(`Em CardPlaceThumb, o "placePhotoName" que chega é: ${placePhotoName}`);
+    // console.log(`Em CardPlaceThumb, o "placePhotoName" que chega é: ${placePhotoName}`);
     const { photoUrl, error } = usePlacePhoto(placePhotoName);
 
     

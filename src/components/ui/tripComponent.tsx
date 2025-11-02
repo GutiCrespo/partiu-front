@@ -5,6 +5,10 @@ import { useEffect, useState } from "react";
 import CardPlaceThumb from "./cardThumb";
 import { usePlacePhoto } from "@/hooks/usePlacePhoto";
 import Link from "next/link";
+import TripInviter from "./collaborators/tripInviter";
+import { Button } from "./button";
+import Modal from "./collaborators/collaboratorModal";
+import InviteModal from "./collaborators/inviteModal";
 
 interface Place {
     id: number;
@@ -23,6 +27,23 @@ interface Place {
     tripId: number;
 }
 
+export type CollaboratorRole = 'OWNER' | 'EDITOR' | 'VIEWER'
+
+export interface UserSummary {
+  id: number;
+  name?: string | null;
+  email: string;
+  profilePicture?: string | null;
+}
+
+export interface Collaborator {
+    id: number;
+    role: CollaboratorRole
+    userId: number;
+    tripId: number
+    user?: UserSummary
+}
+
 interface Trip {
     id: number;
     name: string;
@@ -30,6 +51,7 @@ interface Trip {
     endDate: string;
     image?: string;
     places: Place[];
+    collaborators?: Collaborator[]; 
 }
 
 export default function TripComponentPage({ trip }: { trip: Trip }) {
@@ -46,13 +68,13 @@ export default function TripComponentPage({ trip }: { trip: Trip }) {
             place => place.photoName && place.photoName.length > 0
         );
         
-        
         const firstPhoto = firstPlaceWithPhoto?.photoName?.[0] || null;
         
         setPhotoName(firstPhoto);
     }, [trip]); 
 
     const {photoUrl, error: photoError} = usePlacePhoto(photoName); 
+    const [open, setOpen] = useState(false)
 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
@@ -63,6 +85,10 @@ export default function TripComponentPage({ trip }: { trip: Trip }) {
     const tripName = trip.name;
     const tripBegin = formatDate(trip.startDate);
     const tripEnds = formatDate(trip.endDate);
+
+    function handleCollaboratorSubmit(){
+
+    }
 
     return (
         <div className="flex flex-col w-full md:flex-row">
@@ -93,9 +119,34 @@ export default function TripComponentPage({ trip }: { trip: Trip }) {
                         <p className="text-normal-gray text-xs">{tripEnds}</p>
                     </div>
                 </header>
+                
+                <section className="invite mt-8">
+                    <p className="text-normal-gray">Viajantes:</p>
+                    <div className="flex flex-col">
+                        {trip.collaborators?.map((collaborator) => (
+                            // <TripInviter key={trip.id} collaborator={collaborator}/>
+                            <p key={collaborator.id} className="ml-2">
+                            {collaborator.user?.name}
+                        </p>
+                        ))}
+
+                        <div>
+                            <button type="button" onClick={() => setOpen(true)} className="text-blue hover:font-bold">
+                            Adicionar novos viajantes
+                            </button>
+
+                            {/* <Button variant="secondary">convidar viajante</Button> */}
+
+                            <Modal isOpen={open} onClose={() => setOpen(false)}>
+                                <InviteModal tripId={trip.id} onClose={() => setOpen(false)} />
+                            </Modal>
+                        </div>
+
+                    </div>
+
+                </section>
                 <section className="places mt-8">
                     <p className="text-normal-gray">Lugares para visitar:</p>
-
                 <div className="flex flex-wrap gap-4 mt-4">
                     {trip.places.length > 1 ? (
                         <div className="">
