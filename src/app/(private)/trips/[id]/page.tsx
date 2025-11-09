@@ -29,8 +29,6 @@ interface TripData {
     places: Place[];
 }
 
-
-
 type CookieStore = Awaited<ReturnType<typeof cookies>>
 
 async function getCookieStore(): Promise<CookieStore> {

@@ -2,8 +2,7 @@
 import { getCookie } from "@/helpers/cookies";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { Button } from "../button";
-
+// import { Button } from "../button";
 
 interface InviteModalProps {
   tripId: number;
@@ -18,7 +17,7 @@ export default function InviteModal({ tripId, onClose }: InviteModalProps) {
   async function handleGenerateLink() {
     setLoading(true);
     try {
-      const token = getCookie("authToken"); 
+      const token = getCookie("authToken");
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/trips/${tripId}/link/${role}`, {
         method: "POST",
         headers: {
@@ -28,7 +27,24 @@ export default function InviteModal({ tripId, onClose }: InviteModalProps) {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Erro ao gerar link.");
-      setInviteUrl(data.inviteUrl);
+
+      // Novo formato da API: retorna { token, path }
+      const base =
+        typeof window !== "undefined"
+          ? window.location.origin
+          : process.env.NEXT_PUBLIC_FRONTEND_URL;
+
+      let finalUrl: string | null = null;
+      if (data?.token) {
+        const path = data?.path ?? `/trips/invite/${data.token}`;
+        finalUrl = new URL(path, base).toString();
+      } else if (data?.inviteUrl) {
+        // fallback (caso backend antigo)
+        finalUrl = data.inviteUrl;
+      }
+
+      if (!finalUrl) throw new Error("Resposta sem token/path ou inviteUrl.");
+      setInviteUrl(finalUrl);
     } catch (err) {
       console.error(err);
       alert("Erro ao gerar link de convite.");
@@ -44,13 +60,17 @@ export default function InviteModal({ tripId, onClose }: InviteModalProps) {
       <div className="flex gap-2 mb-4">
         <button
           onClick={() => setRole("VIEWER")}
-          className={`px-3  text-black py-1 rounded-lg  border ${role === "VIEWER" ? " border-blue" : "bg-white  border-gray"}`}
+          className={`px-3 text-black py-1 rounded-lg border ${
+            role === "VIEWER" ? "border-blue" : "bg-white border-gray"
+          }`}
         >
-            Viewer
+          Viewer
         </button>
         <button
           onClick={() => setRole("EDITOR")}
-          className={`px-3  text-black py-1 rounded-lg border ${role === "EDITOR" ? " border-blue" : "bg-white  border-gray"}`}
+          className={`px-3 text-black py-1 rounded-lg border ${
+            role === "EDITOR" ? "border-blue" : "bg-white border-gray"
+          }`}
         >
           Editor
         </button>
@@ -74,15 +94,14 @@ export default function InviteModal({ tripId, onClose }: InviteModalProps) {
               className="flex-1 border px-2 py-1 rounded text-sm"
             />
             <button
-            onClick={() => {
+              onClick={() => {
                 navigator.clipboard.writeText(inviteUrl);
                 toast.success("Link copiado com sucesso!");
-            }}
-            className="text-blue hover:font-semibold text-sm"
+              }}
+              className="text-blue hover:font-semibold text-sm"
             >
-            Copiar
+              Copiar
             </button>
-
           </div>
         </div>
       )}

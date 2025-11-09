@@ -13,7 +13,7 @@ type Props = {
 
 const variantStyles: Record<Variant, string> = {
   default: 'bg-dark-bg text-white hover:bg-hover-primary',
-  secondary: 'bg-white text-black border border-gray rounded-lg hover:bg-gray-100',
+  secondary: 'bg-white text-black border-2 border-gray rounded-lg hover:bg-gray-100',
 }
 
 export const Button = ({
