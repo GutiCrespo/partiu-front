@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import Image from "next/image";
@@ -9,9 +10,11 @@ import { Button } from "./button";
 import Modal from "./collaborators/collaboratorModal";
 import InviteModal from "./collaborators/inviteModal";
 import DeleteCollaboratorModal from "./collaborators/deleteCollaboratorModal";
+import DeleteTripModal from "./deleteTripModal";
 import { getCookie } from "@/helpers/cookies";
 import { toast } from "react-toastify";
 import { Input } from "@/components/ui/input"; 
+import { useRouter } from "next/navigation";
 
 interface Place {
     id: number;
@@ -59,6 +62,7 @@ interface Trip {
 
 export default function TripComponentPage({ trip }: { trip: Trip }) {
 
+    const router = useRouter();
     const [photoName, setPhotoName] = useState<string | null>(null);
 
     useEffect(() => {
@@ -72,8 +76,12 @@ export default function TripComponentPage({ trip }: { trip: Trip }) {
     const {photoUrl, error: photoError} = usePlacePhoto(photoName); 
     const [open, setOpen] = useState(false)
     const [inSetting, setInSetting] = useState(false)
+
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [collabToDelete, setCollabToDelete] = useState<Collaborator | null>(null);
+
+    // 👇 NOVO: modal de deletar roteiro
+    const [deleteTripOpen, setDeleteTripOpen] = useState(false);
 
     const [places, setPlaces] = useState<Place[]>(trip.places);
     useEffect(() => { setPlaces(trip.places); }, [trip]);
@@ -168,6 +176,44 @@ export default function TripComponentPage({ trip }: { trip: Trip }) {
     const tripBegin = formatDate(trip.startDate);
     const tripEnds  = formatDate(trip.endDate);
 
+    async function handleDelete() {
+        try {
+            const linkApi = process.env.NEXT_PUBLIC_API_BASE_URL;
+            const token = getCookie("authToken");
+
+            if (!linkApi) {
+                throw new Error("URL da API não configurada.");
+            }
+
+            const res = await fetch(`${linkApi}/trips/${trip.id}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            const data = await res.json().catch(() => ({} as any));
+
+            if (!res.ok) {
+                throw new Error(data?.error || "Falha ao excluir o roteiro.");
+            }
+
+            toast.success("Roteiro excluído com sucesso.");
+            setDeleteTripOpen(false); // fecha modal
+
+            // Ajusta a rota de destino se tua listagem de viagens estiver em outro path
+            router.push("/trips");
+        } catch (e) {
+            console.error(e);
+            toast.error(
+                e instanceof Error
+                    ? e.message
+                    : "Erro inesperado ao excluir o roteiro."
+            );
+        }
+    }
+
     return (
         <div className="flex flex-col w-full md:flex-row">
             <div className="md:w-1/2">
@@ -184,7 +230,6 @@ export default function TripComponentPage({ trip }: { trip: Trip }) {
             <div className="w-full md:w-1/2 mt-4 md:mt-0 md:ml-4">
                 <header className="">
                     <div className="flex justify-between">
-                        {/* 👇 Título editável quando inSetting ✅ */}
                         <div className="mb-2">
                             {inSetting ? (
                                 <Input
@@ -200,13 +245,19 @@ export default function TripComponentPage({ trip }: { trip: Trip }) {
                         </div>
 
                         <div className="flex gap-2">
-                            <button onClick={() => setInSetting(!inSetting)} className="">
+                            <button onClick={() => setInSetting(!inSetting)} className="cursor-pointer">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="mr-2 text-normal-gray inline-block transform transition-transform duration-300 ease-in-out hover:rotate-90" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M10.825 22q-.675 0-1.162-.45t-.588-1.1L8.85 18.8q-.325-.125-.612-.3t-.563-.375l-1.55.65q-.625.275-1.25.05t-.975-.8l-1.175-2.05q-.35-.575-.2-1.225t.675-1.075l1.325-1Q4.5 12.5 4.5 12.337v-.675q0-.162.025-.337l-1.325-1Q2.675 9.9 2.525 9.25t.2-1.225L3.9 5.975q.35-.575.975-.8t1.25.05l1.55.65q.275-.2.575-.375t.6-.3l.225-1.65q.1-.65.588-1.1T10.825 2h2.35q.675 0 1.163.45t.587 1.1l.225 1.65q.325.125.613.3t.562.375l1.55-.65q.625-.275 1.25-.05t.975.8l1.175 2.05q.35.575.2 1.225t-.675 1.075l-1.325 1q.025.175.025.338v.674q0 .163-.05.338l1.325 1q.525.425.675 1.075t-.2 1.225l-1.2 2.05q-.35.575-.975.8t-1.25-.05l-1.5-.65q-.275.2-.575.375t-.6.3l-.225 1.65q-.1.65-.587 1.1t-1.163.45zm1.225-6.5q1.45 0 2.475-1.025T15.55 12t-1.025-2.475T12.05 8.5q-1.475 0-2.488 1.025T8.55 12t1.013 2.475T12.05 15.5"/></svg>
                             </button>  
                             <div className={`overflow-hidden transition-all duration-300 ease-out
                                 ${inSetting ? "opacity-100 translate-y-0 scale-100 max-w-[200px]" : "opacity-0 -translate-y-1 scale-95 max-w-0 pointer-events-none"}`}
                             >
                                 <Button onClick={handleSave}>Salvar</Button>
+                                <a
+                                    className="mx-2 cursor-pointer text-red"
+                                    onClick={() => setDeleteTripOpen(true)}
+                                >
+                                    Excluir
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -310,6 +361,14 @@ export default function TripComponentPage({ trip }: { trip: Trip }) {
                     </div>
                 </section>
             </div>
+
+            <Modal isOpen={deleteTripOpen} onClose={() => setDeleteTripOpen(false)}>
+                <DeleteTripModal
+                    tripName={tripName}
+                    onClose={() => setDeleteTripOpen(false)}
+                    onConfirm={handleDelete}
+                />
+            </Modal>
         </div>
     );
 }
