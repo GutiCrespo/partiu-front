@@ -15,6 +15,7 @@ import { getCookie } from "@/helpers/cookies";
 import { toast } from "react-toastify";
 import { Input } from "@/components/ui/input"; 
 import { useRouter } from "next/navigation";
+// import LoadingAnimation from "../loadingAnimation";
 
 interface Place {
     id: number;
@@ -80,7 +81,6 @@ export default function TripComponentPage({ trip }: { trip: Trip }) {
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [collabToDelete, setCollabToDelete] = useState<Collaborator | null>(null);
 
-    // 👇 NOVO: modal de deletar roteiro
     const [deleteTripOpen, setDeleteTripOpen] = useState(false);
 
     const [places, setPlaces] = useState<Place[]>(trip.places);

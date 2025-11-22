@@ -58,8 +58,8 @@ export default function SearchDestination() {
 
             </section>
 
-            <ExploreSection/>
-            <WhereGoSection/>
+            {/* <ExploreSection/>
+            <WhereGoSection/> */}
         </main>
     )
 }

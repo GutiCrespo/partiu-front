@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { getCookie } from "@/helpers/cookies";
+import Image from "next/image";
+import LoadingAnimation from "@/components/loadingAnimation";
 
 type AcceptResponse = {
   message: string;
@@ -81,6 +83,7 @@ export default function InviteAcceptPage() {
   if (status === "loading") {
     return (
       <div className="min-h-[50vh] flex flex-col items-center justify-center gap-2">
+        <LoadingAnimation/>
         <p className="text-lg">Aceitando convite…</p>
         <p className="text-sm text-gray-500">Só um instante.</p>
       </div>
@@ -104,6 +107,13 @@ export default function InviteAcceptPage() {
 
   return (
     <div className="min-h-[50vh] flex flex-col items-center justify-center gap-2">
+      <Image
+        src="/sitting_in_something.png"
+        alt="Menininha clicando com uma varinha em botão"
+        width={50}
+        height={50}
+        className="absolute top-1 right-6 z-40"
+      />
       <p className="text-lg">Convite aceito com sucesso!</p>
       <p className="text-sm text-gray-500">Redirecionando…</p>
     </div>

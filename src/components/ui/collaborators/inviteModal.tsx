@@ -56,6 +56,7 @@ export default function InviteModal({ tripId, onClose }: InviteModalProps) {
   return (
     <div className="p-4">
       <h2 className="text-lg font-semibold mb-4">Convidar viajantes</h2>
+      <p className="text-sm text-normal-gray">Defina as permissões de acesso:</p>
 
       <div className="flex gap-2 mb-4">
         <button
@@ -64,7 +65,7 @@ export default function InviteModal({ tripId, onClose }: InviteModalProps) {
             role === "VIEWER" ? "border-blue" : "bg-white border-gray"
           }`}
         >
-          Viewer
+          Visualizador
         </button>
         <button
           onClick={() => setRole("EDITOR")}

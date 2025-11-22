@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react"; 
 import { getCookie } from "@/helpers/cookies";
 import CardTripThumb from "@/components/ui/cardTripThumb";
+import LoadingAnimation from "@/components/loadingAnimation";
 
 interface Place {
     id: number;
@@ -84,6 +85,7 @@ export default function TripsPage() {
     if (loading) {
         return (
             <Container>
+                <LoadingAnimation/>
                 <p>Carregando seus roteiros...</p>
             </Container>
         );
