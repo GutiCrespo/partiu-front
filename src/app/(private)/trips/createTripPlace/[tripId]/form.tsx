@@ -1,7 +1,6 @@
 'use client';
 
 import { Button } from "@/components/ui/button/index";
-import { Input } from "@/components/ui/input";
 import { useForm, Controller } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import Autocomplete from "../../../../../components/ui/autocomplete-places";

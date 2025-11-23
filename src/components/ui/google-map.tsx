@@ -12,6 +12,9 @@ import {
   useMapsLibrary,
 } from "@vis.gl/react-google-maps";
 import { getCookie } from "@/helpers/cookies";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import { Button } from "./button";
 
 interface MapsProps {
   latitude?: number;
@@ -112,6 +115,8 @@ function PlacesDetailsLoader({
 }
 
 export default function Maps({ latitude, longitude }: MapsProps) {
+  const router = useRouter();
+
   const [mapCenter, setMapCenter] = useState({ lat: -31.77, lng: -52.34 });
   const [mapZoom, setMapZoom] = useState(7);
 
@@ -123,6 +128,7 @@ export default function Maps({ latitude, longitude }: MapsProps) {
   const [tripsLoading, setTripsLoading] = useState(false);
   const [tripsError, setTripsError] = useState<string | null>(null);
   const [showTripMenu, setShowTripMenu] = useState(false);
+  const [authRequired, setAuthRequired] = useState(false);
 
   const apiToken = process.env.NEXT_PUBLIC_MAPS_API_KEY!;
   const mapId = process.env.NEXT_PUBLIC_MAP_ID!;
@@ -178,15 +184,15 @@ export default function Maps({ latitude, longitude }: MapsProps) {
     const authToken = getCookie("authToken");
 
     if (!authToken) {
-      setTripsError(
-        "Token de autenticação não encontrado. Faça login novamente."
-      );
+      setAuthRequired(true);
+      setTripsError(null);
       return;
     }
 
     try {
       setTripsLoading(true);
       setTripsError(null);
+      setAuthRequired(false);
 
       const response = await fetch(`${apiBaseUrl}/trips/myTrips`, {
         method: "GET",
@@ -197,6 +203,12 @@ export default function Maps({ latitude, longitude }: MapsProps) {
       });
 
       if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          setAuthRequired(true);
+          setTripsError(null);
+          return;
+        }
+
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || "Erro ao buscar viagens.");
       }
@@ -227,10 +239,139 @@ export default function Maps({ latitude, longitude }: MapsProps) {
     }
   };
 
-  const handleSelectTrip = (tripId: number) => {
+  const checkPlaceAlreadyInTrip = useCallback(
+    async (tripId: number, placeId: string): Promise<boolean> => {
+      if (!apiBaseUrl) return false;
+
+      try {
+        const res = await fetch(`${apiBaseUrl}/tripPlaces/${tripId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!res.ok) {
+          console.warn(
+            "Erro ao verificar lugares do roteiro antes de adicionar:",
+            res.status
+          );
+          return false;
+        }
+
+        const trip = await res.json();
+        const places = trip?.places ?? [];
+
+        const exists = places.some(
+          (p: { placeId: string }) => p.placeId === placeId
+        );
+
+        return exists;
+      } catch (error) {
+        console.error("Erro ao checar duplicidade de lugar no roteiro:", error);
+        return false;
+      }
+    },
+    [apiBaseUrl]
+  );
+
+  const handleSelectTrip = async (tripId: number) => {
     console.log("Roteiro selecionado:", tripId, "Lugar:", selectedPlace);
+
+    if (!apiBaseUrl) {
+      console.error("NEXT_PUBLIC_API_BASE_URL não configurada.");
+      toast.error("Erro de configuração. API não encontrada.");
+      return;
+    }
+
+    if (!selectedPlace || !selectedPlace.placeId) {
+      console.error("Nenhum lugar selecionado ou placeId ausente.");
+      toast.error("Não foi possível identificar o destino selecionado.");
+      return;
+    }
+
+    const token = getCookie("authToken");
+
+    if (!token) {
+      console.error("Token de autenticação não encontrado. Indo para login.");
+      setShowTripMenu(false);
+      setSelectedPlace(null);
+      toast.info("Faça login para adicionar destinos ao seu roteiro.");
+      router.push("/login");
+      return;
+    }
+
+    const alreadyInTrip = await checkPlaceAlreadyInTrip(
+      tripId,
+      selectedPlace.placeId
+    );
+
+    if (alreadyInTrip) {
+      toast.info("Esse destino já está nesse roteiro.");
+      setShowTripMenu(false);
+      return;
+    }
+
+    try {
+      console.log(`Chamando POST ${apiBaseUrl}/tripPlaces`, {
+        placeId: selectedPlace.placeId,
+        tripId,
+      });
+
+      const res = await fetch(`${apiBaseUrl}/tripPlaces`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          placeId: selectedPlace.placeId,
+          tripId: tripId,
+        }),
+      });
+
+      const result = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        console.error(
+          "Erro na resposta da API ao adicionar local ao roteiro:",
+          result || res.status
+        );
+        toast.error(
+          result?.error ||
+            "Não foi possível adicionar o destino a esse roteiro."
+        );
+        return;
+      }
+
+      console.log("Destino registrado com sucesso:", result);
+      console.log("Registrado na trip:", tripId);
+
+      toast.success("Destino adicionado ao roteiro! ✈️");
+
+      setShowTripMenu(false);
+      setSelectedPlace(null);
+
+      router.push(`/trips/tripPlace/${tripId}`);
+    } catch (error) {
+      console.error(
+        `Erro ao chamar o POST em: ${apiBaseUrl}/tripPlaces`,
+        error
+      );
+      toast.error("Erro inesperado ao adicionar o destino ao roteiro.");
+    }
+  };
+
+  const handleCreateNewTrip = () => {
     setShowTripMenu(false);
     setSelectedPlace(null);
+    router.push("/trips/createTrip");
+  };
+
+  const handleGoToLogin = () => {
+    setShowTripMenu(false);
+    setSelectedPlace(null);
+    router.push("/login");
   };
 
   if (!apiToken || !mapId) {
@@ -286,7 +427,11 @@ export default function Maps({ latitude, longitude }: MapsProps) {
 
                 {selectedPlace.name && (
                   <h3
-                    style={{ fontSize: 16, fontWeight: 600, marginBottom: 4 }}
+                    style={{
+                      fontSize: 16,
+                      fontWeight: 600,
+                      marginBottom: 4,
+                    }}
                   >
                     {selectedPlace.name}
                   </h3>
@@ -304,22 +449,12 @@ export default function Maps({ latitude, longitude }: MapsProps) {
                   </p>
                 )}
 
-                <button
-                  style={{
-                    width: "100%",
-                    padding: "6px 10px",
-                    fontSize: 13,
-                    borderRadius: 6,
-                    border: "1px solid #ccc",
-                    cursor: "pointer",
-                    marginBottom: 8,
-                    background: "#fff",
-                  }}
-                  onClick={handleAddToTripClick}
-                >
-                  ➕ Adicionar ao roteiro
-                </button>
+                {/* Botão para abrir/fechar o menu de roteiros */}
+                <Button onClick={handleAddToTripClick}>
+                  Adicionar ao roteiro
+                </Button>
 
+                {/* Menu suspenso com roteiros + criar novo / login */}
                 {showTripMenu && (
                   <div
                     style={{
@@ -332,48 +467,92 @@ export default function Maps({ latitude, longitude }: MapsProps) {
                       background: "#fff",
                     }}
                   >
-                    {tripsLoading && (
+                    {authRequired ? (
                       <p style={{ fontSize: 12 }}>
-                        Carregando seus roteiros...
-                      </p>
-                    )}
-
-                    {tripsError && (
-                      <p style={{ fontSize: 12, color: "red" }}>
-                        Ops, erro ao carregar roteiros.
-                      </p>
-                    )}
-
-                    {!tripsLoading &&
-                      !tripsError &&
-                      trips.length === 0 && (
-                        <p style={{ fontSize: 12 }}>
-                          Você ainda não tem nenhum roteiro cadastrado.
-                        </p>
-                      )}
-
-                    {!tripsLoading &&
-                      !tripsError &&
-                      trips.length > 0 &&
-                      trips.map((trip) => (
+                        Você precisa fazer login para adicionar destinos ao seu
+                        roteiro.{" "}
                         <button
-                          key={trip.id}
                           style={{
-                            display: "block",
-                            width: "100%",
-                            textAlign: "left",
-                            padding: "4px 6px",
-                            fontSize: 12,
+                            padding: 0,
                             border: "none",
-                            background: "transparent",
+                            background: "none",
+                            color: "#0070f3",
+                            textDecoration: "underline",
                             cursor: "pointer",
-                            borderRadius: 4,
+                            fontSize: 12,
                           }}
-                          onClick={() => handleSelectTrip(trip.id)}
+                          onClick={handleGoToLogin}
                         >
-                          {trip.name}
+                          Clique aqui e faça seu login.
                         </button>
-                      ))}
+                      </p>
+                    ) : (
+                      <>
+                        {tripsLoading && (
+                          <p style={{ fontSize: 12 }}>
+                            Carregando seus roteiros...
+                          </p>
+                        )}
+
+                        {tripsError && (
+                          <p style={{ fontSize: 12, color: "red" }}>
+                            Ops, erro ao carregar roteiros.
+                          </p>
+                        )}
+
+                        {!tripsLoading &&
+                          !tripsError &&
+                          trips.length === 0 && (
+                            <p style={{ fontSize: 12 }}>
+                              Você ainda não tem nenhum roteiro cadastrado.
+                            </p>
+                          )}
+
+                        {!tripsLoading &&
+                          !tripsError &&
+                          trips.length > 0 &&
+                          trips.map((trip) => (
+                            <button
+                              key={trip.id}
+                              style={{
+                                display: "block",
+                                width: "100%",
+                                textAlign: "left",
+                                padding: "4px 6px",
+                                fontSize: 12,
+                                border: "none",
+                                background: "transparent",
+                                cursor: "pointer",
+                                borderRadius: 4,
+                              }}
+                              onClick={() => handleSelectTrip(trip.id)}
+                            >
+                              {trip.name}
+                            </button>
+                          ))}
+
+                        {!tripsLoading && !tripsError && (
+                          <button
+                            style={{
+                              display: "block",
+                              width: "100%",
+                              textAlign: "left",
+                              padding: "4px 6px",
+                              fontSize: 12,
+                              border: "none",
+                              background: "transparent",
+                              cursor: "pointer",
+                              borderRadius: 4,
+                              marginTop: 4,
+                              fontWeight: 600,
+                            }}
+                            onClick={handleCreateNewTrip}
+                          >
+                            Criar novo roteiro
+                          </button>
+                        )}
+                      </>
+                    )}
                   </div>
                 )}
 
@@ -385,6 +564,8 @@ export default function Maps({ latitude, longitude }: MapsProps) {
                     style={{
                       fontSize: 12,
                       textDecoration: "underline",
+                      display: "block",   // <- força ficar embaixo
+                      marginTop: 8,       // <- espaço entre o botão/menu e o link
                     }}
                   >
                     Ver no Google Maps
