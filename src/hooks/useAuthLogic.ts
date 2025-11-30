@@ -80,6 +80,7 @@ export const useAuthLogic = () => {
       // Respeita o ?next= (se não houver, vai para "/")
       const next = getSafeNextFromLocation() || "/";
       router.replace(next);
+      router.refresh()
     } catch (error: unknown) {
       console.error("Erro no login:", error);
       toast.error("Credenciais inválidas. Tente novamente.");
@@ -111,6 +112,7 @@ export const useAuthLogic = () => {
       // Respeita o ?next= também no cadastro
       const next = getSafeNextFromLocation() || "/";
       router.replace(next);
+      router.refresh()
     } catch (error) {
       console.error("Erro no cadastro:", error);
       // toast.error("Erro ao cadastrar. O e-mail pode já estar em uso.");

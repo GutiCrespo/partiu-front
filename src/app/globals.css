@@ -302,3 +302,18 @@ p.small {
 @utility animate-loading-animation {
   animation: loading-animation 3s steps(1, end) infinite;
 }
+
+/* Sprite de 3 frames: cada frame = 347.77x128, layout horizontal */
+@keyframes loading-sprite {
+  0% {
+    background-position: 0px 0px;          /* frame 1 */
+  }
+  100% {
+    background-position: -1044px 0px;       /* frame 3: -2 * 347.77 */
+  }
+}
+
+/* Utilitário Tailwind-like para usar no componente */
+@utility animate-loading-sprite {
+  animation: loading-sprite 1s steps(3) infinite;
+}
