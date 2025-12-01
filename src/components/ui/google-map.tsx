@@ -352,7 +352,7 @@ export default function Maps({ latitude, longitude }: MapsProps) {
       setShowTripMenu(false);
       setSelectedPlace(null);
 
-      router.push(`/trips/tripPlace/${tripId}`);
+      // router.push(`/trips/tripPlace/${tripId}`);
     } catch (error) {
       console.error(
         `Erro ao chamar o POST em: ${apiBaseUrl}/tripPlaces`,
