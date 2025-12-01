@@ -45,7 +45,7 @@ export default function Autocomplete({handleCoordinates, label, placeholder}: Au
     debounceTimeoutRef.current = setTimeout(async () => {
       const fetchedPredictions = await autocomplete(value)
       setPredictions(fetchedPredictions);
-      // console.log(fetchedPredictions);
+      // 
     }, 500);
 
     return () => {
@@ -63,8 +63,8 @@ export default function Autocomplete({handleCoordinates, label, placeholder}: Au
     const results = await getGeocode({address})
     const {lat, lng} = await getLatLng(results[0])
 
-    // console.log(`Latitude: ${lat}`);
-    // console.log(`Longitude: ${lng}`);
+    // 
+    // 
 
     handleCoordinates(address, lat, lng, placeID)
     clearSuggestions()

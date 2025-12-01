@@ -30,7 +30,7 @@ export function middleware(request: NextRequest) {
   const search = request.nextUrl.search
   const token = request.cookies.get('authToken')?.value
 
-  // console.log(`O path é: ${path}`);
+  // 
 
   if (token && isAuthPage(path)) {
     return NextResponse.redirect(new URL("/", request.url));

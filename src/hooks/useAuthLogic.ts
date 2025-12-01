@@ -80,10 +80,16 @@ export const useAuthLogic = () => {
       // Respeita o ?next= (se não houver, vai para "/")
       const next = getSafeNextFromLocation() || "/";
       router.replace(next);
-      router.refresh()
+      router.refresh();
     } catch (error: unknown) {
       console.error("Erro no login:", error);
-      toast.error("Credenciais inválidas. Tente novamente.");
+
+      const msg =
+        error instanceof Error
+          ? error.message
+          : "Credenciais inválidas. Tente novamente.";
+
+      toast.error(msg);
       // não faz logout aqui
     }
   };
@@ -112,11 +118,17 @@ export const useAuthLogic = () => {
       // Respeita o ?next= também no cadastro
       const next = getSafeNextFromLocation() || "/";
       router.replace(next);
-      router.refresh()
-    } catch (error) {
+      router.refresh();
+    } catch (error: unknown) {
       console.error("Erro no cadastro:", error);
-      toast.error("Erro ao cadastrar. O e-mail pode já estar em uso.");
-      // logout();
+
+      const msg =
+        error instanceof Error
+          ? error.message
+          : "Erro ao cadastrar. Tente novamente.";
+
+      toast.error(msg);
+      // se quiser fazer algo extra (tipo resetar form), faz aqui
     }
   };
 
@@ -132,7 +144,9 @@ export const useAuthLogic = () => {
           setIsLoggedIn(true);
         } catch (error) {
           console.error("Erro ao verificar token na inicialização:", error);
-          toast.error("Sessão expirada ou inválida. Por favor, faça login novamente.");
+          toast.error(
+            "Sessão expirada ou inválida. Por favor, faça login novamente."
+          );
           logout();
         }
       } else {

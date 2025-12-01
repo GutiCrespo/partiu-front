@@ -27,7 +27,7 @@ export default function SearchDestination() {
         setLatitude(lat);
         setLongitude(lng);
         setPlaceId(placeID); 
-        console.log("Dados recebidos do Autocomplete:", { address, lat, lng, placeID });
+        
     };
 
     return (

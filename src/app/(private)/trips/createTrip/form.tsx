@@ -93,14 +93,14 @@ export const CreateTripForm = () => {
     setValue('latitude', lat);     
     setValue('longitude', lng);   
     setValue('placeId', placeID);   
-    console.log("Dados recebidos do Autocomplete:", { address, lat, lng, placeID });
+    
   };
   
   async function onSubmit(data: CreateTripFormData) {
-    console.log("Dados do formulário:", data);
+    
 
     if (!data.placeId){
-      console.log("Place ID não encontrado");
+      
       return;
     }
     const token = getCookie("authToken"); 
@@ -112,7 +112,7 @@ export const CreateTripForm = () => {
     }
 
     try {
-      console.log(`Chamando o método "Post" em: ${apiUrl}/trips`);
+      
       const res = await fetch(`${apiUrl}/trips`, {
         method: "POST",
         headers: {
@@ -132,11 +132,11 @@ export const CreateTripForm = () => {
       if (!res.ok) {
         console.error(`Erro na resposta da API: ${JSON.stringify(result)}`); 
         console.error(`Status HTTP: ${res.status}`);
-        console.log(`Owner ID (from context for debug): ${userInfo?.id}`); 
+         
         return;
       }
 
-      console.log(`Viagem registrada com sucesso:`, result);
+      
       router.push('/trips'); 
     } catch (error) {
       console.error(`Erro ao chamar o método "Post" em: ${apiUrl}/trips`, error);

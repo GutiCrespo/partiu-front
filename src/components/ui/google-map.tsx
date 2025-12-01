@@ -106,7 +106,7 @@ function PlacesDetailsLoader({
         },
       };
 
-      console.log("Detalhes carregados via PlacesService:", updated);
+      
       setSelectedPlace(updated);
     });
   }, [placesService, selectedPlace, setSelectedPlace]);
@@ -170,7 +170,7 @@ export default function Maps({ latitude, longitude }: MapsProps) {
       },
     };
 
-    console.log("POI clicado no mapa (antes dos detalhes):", nextSelected);
+    
     setSelectedPlace(nextSelected);
     setShowTripMenu(false);
   }, []);
@@ -276,7 +276,7 @@ export default function Maps({ latitude, longitude }: MapsProps) {
   );
 
   const handleSelectTrip = async (tripId: number) => {
-    console.log("Roteiro selecionado:", tripId, "Lugar:", selectedPlace);
+    
 
     if (!apiBaseUrl) {
       console.error("NEXT_PUBLIC_API_BASE_URL não configurada.");
@@ -344,8 +344,8 @@ export default function Maps({ latitude, longitude }: MapsProps) {
         return;
       }
 
-      console.log("Destino registrado com sucesso:", result);
-      console.log("Registrado na trip:", tripId);
+      
+      
 
       toast.success("Destino adicionado ao roteiro! ✈️");
 

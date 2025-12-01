@@ -15,10 +15,10 @@ export function usePlacePhoto(
 
   useEffect(() => {
 
-    console.log(`PlacePhotoName recebido: ${placePhotoName}`);
+    
     
     if (!placePhotoName || !placePhotoName.startsWith("places/")) {
-      console.log("Necessário utilizar o fallback");
+      
       setPhotoUrl(fallbackPhoto);
       return;
     }
@@ -29,11 +29,11 @@ export function usePlacePhoto(
         if (!backendUrl) throw new Error("NEXT_PUBLIC_API_BASE_URL não definido.");
 
         
-        console.log(`---------------`);
-        console.log(`Page: usePlacePhoto`);
-        console.log(`PlacePhotoName = ${placePhotoName}`);
-        console.log(`Request ao backend através do link ${backendUrl}/tripPlaces/photo?photoName=${placePhotoName}`);
-        console.log(`---------------`);
+        
+        
+        
+        
+        
         
       const url = `${backendUrl}/tripPlaces/photo?photoName=${encodeURIComponent(placePhotoName ?? "")}`;
 

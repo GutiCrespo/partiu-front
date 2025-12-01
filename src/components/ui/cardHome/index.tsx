@@ -22,7 +22,7 @@ export default function CardHome({ position = "0" }: Props) {
         height={305}
         src={photoSelected}
         alt="Imagem do recurso"
-        className="max-w-[40%]"
+        className="max-w-[40%] w-auto h-auto"
       />
       <p className="bold">Planejamento em grupo</p>
       <p>Convide amigos e monte o roteiro juntos, sem stress.</p>

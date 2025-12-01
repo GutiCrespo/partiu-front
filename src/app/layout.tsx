@@ -13,6 +13,9 @@ import { NavigationTransitionLoader } from "@/components/navigation-transition-l
 export const metadata: Metadata = {
   title: 'Partiu - Sua viagem começa aqui',
   description: 'Gerencie suas viagens de forma fácil e intuitiva.', 
+  icons: {
+    icon: "/favicon.svg"
+  },
 };
 
 const poppins = Poppins({

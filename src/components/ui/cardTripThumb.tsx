@@ -36,8 +36,8 @@ export default function CardTripThumb({ trip }: { trip: Trip }) {
 
     const [photoName, setPhotoName] = useState<string | null>(null);
 
-    console.log("========== DEBUG TRIP ==========");
-    console.log("cardTripThumb.tsx");
+    
+    
     console.dir(trip, { depth: null, colors: true });
     
     useEffect(() => {
@@ -54,7 +54,7 @@ export default function CardTripThumb({ trip }: { trip: Trip }) {
         firstPhoto = pn || null;
     }
 
-    console.log("UseEffect ativado. FirstPhoto retornou:", firstPhoto);
+    
     setPhotoName(firstPhoto);
     }, [trip]);
         
@@ -69,7 +69,7 @@ export default function CardTripThumb({ trip }: { trip: Trip }) {
     const tripName = trip.name;
     const tripBegin = formatDate(trip.startDate);
     const tripEnds = formatDate(trip.endDate);    
-    console.log("================================\n");
+    
     
     return (
         <div className="bg-white border border-gray w-full flex p-2 gap-2 rounded-lg h-fit md:h-fit lg:h-fit overflow-hidden">

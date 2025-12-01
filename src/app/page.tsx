@@ -51,8 +51,8 @@ export default function Home() {
                 alt="Um mapa com várias setas apontando para um coração que está ao centro." 
                 className="max-w-[40%]"
               />
-              <p className="bold">Roteiros organizados por dia</p>
-              <p className="">Crie uma linha do tempo das melhores opções para seu dia.</p>
+              <p className="bold">Roteiros organizados, em um só lugar</p>
+              <p className="">Centralize suas opções de visita com facilidade e dinamismo.</p>
             </div>
             <div className={cardCSS}>
               <Image

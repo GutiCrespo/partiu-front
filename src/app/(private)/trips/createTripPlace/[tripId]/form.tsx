@@ -36,14 +36,14 @@ export const CreateTripPlaceForm = ({ tripId }: CreateTripPlaceFormProps) => {
         setValue('latitude', lat);
         setValue('longitude', lng);
         setValue('placeId', placeID);
-        console.log("Dados recebidos do Autocomplete (CreateTripPlaceForm):", { address, lat, lng, placeID });
+        
     };
 
     async function onSubmit(data: CreateTripPlaceFormData) {
-        console.log("Dados do formulário (createTripPlace):", data);
+        
 
         if (!data.placeId) {
-            console.log("Place ID não encontrado.");
+            
             return;
         }
 
@@ -56,7 +56,7 @@ export const CreateTripPlaceForm = ({ tripId }: CreateTripPlaceFormProps) => {
         }
 
         try {
-            console.log(`Chamando o método "Post" em: ${apiUrl}/tripPlaces`);
+            
             const res = await fetch(`${apiUrl}/tripPlaces`, {
                 method: "POST",
                 headers: {
@@ -74,12 +74,12 @@ export const CreateTripPlaceForm = ({ tripId }: CreateTripPlaceFormProps) => {
             if (!res.ok) {
                 console.error(`Erro na resposta da API: ${JSON.stringify(result)}`);
                 console.error(`Status HTTP: ${res.status}`);
-                console.log(`Owner ID (from context for debug): ${userInfo?.id}`);
+                
                 return;
             }
 
-            console.log(`Destino registrado com sucesso:`, result);
-            console.log(`Registrado na trip:`, tripId);
+            
+            
             router.push(`/trips/tripPlace/${tripId}`);
         } catch (error) {
             console.error(`Erro ao chamar o método "Post" em: ${apiUrl}/tripPlaces`, error); // Corrigido o log para tripPlaces

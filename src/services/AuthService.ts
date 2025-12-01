@@ -4,7 +4,7 @@ import {
   UserRegisterResponse,
 } from "@/types/api";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL
+const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export const AuthService = {
   async login(email: string, password: string): Promise<UserLoginResponse> {
@@ -17,16 +17,25 @@ export const AuthService = {
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      console.log(errorData);
-      throw new Error(errorData.erro || "Erro no login.");
+      let errorMessage = "Erro no login.";
+      try {
+        const errorData = await response.json();
+        
+        errorMessage = errorData.erro || errorMessage;
+      } catch {
+        // se não conseguir fazer parse do JSON, mantém mensagem padrão
+      }
+      throw new Error(errorMessage);
     }
 
     return response.json();
   },
 
-  async register(name: string, email: string, password: string): Promise<UserRegisterResponse> {
-    
+  async register(
+    name: string,
+    email: string,
+    password: string
+  ): Promise<UserRegisterResponse> {
     const response = await fetch(`${apiUrl}/users`, {
       method: "POST",
       headers: {
@@ -34,13 +43,19 @@ export const AuthService = {
       },
       body: JSON.stringify({ name, email, password }),
     });
-    
+
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.erro || "Erro no cadastro.");
+      let errorMessage = "Erro no cadastro.";
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.erro || errorMessage;
+      } catch {
+        // se não conseguir parsear o JSON, mantém mensagem padrão
+      }
+      throw new Error(errorMessage);
     }
+
     
-    console.log("Registrado com sucesso.");
     return response.json();
   },
 
@@ -49,13 +64,19 @@ export const AuthService = {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${authToken}`,
+        Authorization: `Bearer ${authToken}`,
       },
     });
-    
+
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Erro ao verificar token.");
+      let errorMessage = "Erro ao verificar token.";
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorMessage;
+      } catch {
+        // se der erro no JSON, mantém mensagem padrão
+      }
+      throw new Error(errorMessage);
     }
 
     return response.json();
