@@ -115,7 +115,7 @@ export const useAuthLogic = () => {
       router.refresh()
     } catch (error) {
       console.error("Erro no cadastro:", error);
-      // toast.error("Erro ao cadastrar. O e-mail pode já estar em uso.");
+      toast.error("Erro ao cadastrar. O e-mail pode já estar em uso.");
       // logout();
     }
   };
@@ -132,7 +132,7 @@ export const useAuthLogic = () => {
           setIsLoggedIn(true);
         } catch (error) {
           console.error("Erro ao verificar token na inicialização:", error);
-          // toast.error("Sessão expirada ou inválida. Por favor, faça login novamente.");
+          toast.error("Sessão expirada ou inválida. Por favor, faça login novamente.");
           logout();
         }
       } else {
